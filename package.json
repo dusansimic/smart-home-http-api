@@ -1,0 +1,32 @@
+{
+  "name": "smart-home-http-api",
+  "version": "0.0.1",
+  "description": "imple smart home server that has http api for controlling data",
+  "main": "main.js",
+  "dependencies": {
+    "express": "^4.14.1",
+    "jsonfile": "^2.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dusansimic/smart-home-http-api.git"
+  },
+  "keywords": [
+    "node.js",
+    "express.js",
+    "http",
+    "api",
+    "smart",
+    "home"
+  ],
+  "author": "Dušan Simić",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dusansimic/smart-home-http-api/issues"
+  },
+  "homepage": "https://github.com/dusansimic/smart-home-http-api#readme"
+}
