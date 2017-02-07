@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Smart Home</title>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="body">
+        <input type="button" id="get-temperature-btn" value="Get temperature"></input>
+        <p id="temperature-display"></p>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script type="text/javascript">
+      var socket = io();
+
+      $('#get-temperature-btn').click(function() {
+        socket.emit('get temperature');
+      });
+
+      socket.on('new temperature', function(temperature) {
+        $('#temperature-display').val(temperature);
+      });
+    </script>
+  </body>
+</html>
