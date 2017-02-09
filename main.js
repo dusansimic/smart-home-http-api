@@ -53,7 +53,7 @@ web_io.on('connection', function(socket) {
       if (err === null) {
         socket.emit('new temperature', obj.temperature);
       } else {
-        console.error('[web] ' + err)
+        console.error('[web] ' + err);
         socket.emit('new temperature', err);
       }
     });

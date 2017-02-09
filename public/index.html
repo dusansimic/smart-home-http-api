@@ -21,7 +21,7 @@
       });
 
       socket.on('new temperature', function(temperature) {
-        $('#temperature-display').val(temperature);
+        $('#temperature-display').text('Temperature: ' + temperature);
       });
     </script>
   </body>
