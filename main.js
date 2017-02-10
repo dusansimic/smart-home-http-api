@@ -34,6 +34,26 @@ api_app.get('/new-temperature', function(req, res) {
   });
 });
 
+api_app.get('/new-light', function(req, res) {
+  var newLight = req.query.light;
+  jsonfile.readFile(database, function(err, obj) {
+    if (err === null) {
+      obj.light = newLight;
+      jsonfile.writeFile(database, obj, function(err) {
+        if (err !== null) {
+          console.error('[api] ' + err);
+          res.send('not ok: ' + err);
+        } else {
+          res.send('ok');
+        }
+      });
+    } else {
+      console.error('[api] ' + err);
+      res.send('not ok: ' + err);
+    }
+  });
+})
+
 api_app.listen(3003, '0.0.0.0', function() {
   console.log('listening api *:3003');
 });
@@ -55,6 +75,17 @@ web_io.on('connection', function(socket) {
       } else {
         console.error('[web] ' + err);
         socket.emit('new temperature', err);
+      }
+    });
+  });
+
+  socket.on('get light', function() {
+    jsonfile.readFile(database, function(err, obj) {
+      if (err === null) {
+        socket.emit('new light', obj.light);
+      } else {
+        console.error('[web] ' + err);
+        socket.emit('new light', err);
       }
     });
   });

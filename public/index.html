@@ -5,23 +5,44 @@
     <title>Smart Home</title>
   </head>
   <body>
-    <div id="wrapper">
-      <div id="body">
-        <input type="button" id="get-temperature-btn" value="Get temperature"></input>
-        <p id="temperature-display"></p>
+    <div id="app">
+      <div id="wrapper">
+        <div id="body">
+          <!--<input type="button" id="get-data-btn" value="Get data"></input>-->
+          <p id="temperature-display">Temperature: {{temperature}}</p>
+          <p id="light-display">Light: {{light}}</p>
+        </div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script type="text/javascript">
       var socket = io();
 
-      $('#get-temperature-btn').click(function() {
+      var app = new Vue({
+        el: '#body',
+        data: {
+          temperature: '',
+          light: ''
+        }
+      });
+
+      $(document).ready(function() {
         socket.emit('get temperature');
+        socket.emit('get light');
       });
 
       socket.on('new temperature', function(temperature) {
-        $('#temperature-display').text('Temperature: ' + temperature);
+        //$('#temperature-display').text('Temperature: ' + temperature);
+        app.temperature = temperature;
+        console.log(temperature);
+      });
+
+      socket.on('new light', function(light) {
+        //$('#light-display').text('Light: ' + temperature);
+        app.light = light;
+        console.log(light);
       });
     </script>
   </body>
