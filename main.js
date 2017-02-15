@@ -12,33 +12,6 @@ var jsonfile = require('jsonfile');
 
 var database = 'data/database.json';
 
-// === some functions ===
-
-var sendTemperature = function() {
-  jsonfile.readFile(database, function(err, obj) {
-    if (err === null) {
-      web_io.emit('new temperature', obj.temperature);
-    } else {
-      console.error('[web] ' + err);
-      web_io.emit('new temperature', err);
-    }
-  });
-};
-
-var sendLight = function() {
-  jsonfile.readFile(database, function(err, obj) {
-    if (err === null) {
-      web_io.emit('new light', obj.light);
-    } else {
-      console.error('[web] ' + err);
-      web_io.emit('new light', err);
-    }
-  });
-};
-
-
-
-
 // === api code ===
 
 api_app.get('/new-temperature', function(req, res) {
@@ -46,6 +19,7 @@ api_app.get('/new-temperature', function(req, res) {
   jsonfile.readFile(database, function(err, obj) {
     if (err === null) {
       obj.temperature = newTemperature;
+      web_io.emit('new temperature', obj.temperature);
       jsonfile.writeFile(database, obj, function(err) {
         if (err !== null) {
           console.error('[api] ' + err);
@@ -59,7 +33,6 @@ api_app.get('/new-temperature', function(req, res) {
       res.send('not ok: ' + err);
     }
   });
-  sendTemperature();
 });
 
 api_app.get('/new-light', function(req, res) {
@@ -67,6 +40,7 @@ api_app.get('/new-light', function(req, res) {
   jsonfile.readFile(database, function(err, obj) {
     if (err === null) {
       obj.light = newLight;
+      web_io.emit('new light', obj.light);
       jsonfile.writeFile(database, obj, function(err) {
         if (err !== null) {
           console.error('[api] ' + err);
@@ -80,7 +54,6 @@ api_app.get('/new-light', function(req, res) {
       res.send('not ok: ' + err);
     }
   });
-  sendLight();
 });
 
 api_app.listen(3003, '0.0.0.0', function() {
@@ -103,7 +76,6 @@ web_io.on('connection', function(socket) {
         socket.emit('new temperature', obj.temperature);
       } else {
         console.error('[web] ' + err);
-        socket.emit('new temperature', err);
       }
     });
   });
@@ -114,7 +86,6 @@ web_io.on('connection', function(socket) {
         socket.emit('new light', obj.light);
       } else {
         console.error('[web] ' + err);
-        socket.emit('new light', err);
       }
     });
   });
