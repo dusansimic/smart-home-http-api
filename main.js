@@ -14,46 +14,44 @@ var database = 'data/database.json';
 
 // === api code ===
 
-api_app.get('/new-temperature', function(req, res) {
-  var newTemperature = req.query.temperature;
-  jsonfile.readFile(database, function(err, obj) {
-    if (err === null) {
-      obj.temperature = newTemperature;
-      web_io.emit('new temperature', obj.temperature);
-      jsonfile.writeFile(database, obj, function(err) {
-        if (err !== null) {
-          console.error('[api] ' + err);
-          res.send('not ok: ' + err);
-        } else {
-          res.send('ok');
-        }
-      });
-    } else {
-      console.error('[api] ' + err);
-      res.send('not ok: ' + err);
-    }
-  });
-});
-
-api_app.get('/new-light', function(req, res) {
-  var newLight = req.query.light;
-  jsonfile.readFile(database, function(err, obj) {
-    if (err === null) {
-      obj.light = newLight;
-      web_io.emit('new light', obj.light);
-      jsonfile.writeFile(database, obj, function(err) {
-        if (err !== null) {
-          console.error('[api] ' + err);
-          res.send('not ok: ' + err);
-        } else {
-          res.send('ok');
-        }
-      });
-    } else {
-      console.error('[api] ' + err);
-      res.send('not ok: ' + err);
-    }
-  });
+api_app.get('/new-data', function(req, res) {
+  if (req.query.temperature !== undefined) {
+    var newTemperature = req.query.temperature;
+    jsonfile.readFile(database, function(err, obj) {
+      if (err === null) {
+        obj.temperature = newTemperature;
+        web_io.emit('new temperature', obj.temperature);
+        jsonfile.writeFile(database, obj, function(err) {
+          if (err !== null) {
+            console.error('[api] ' + err);
+            res.send('not ok: ' + err);
+          }
+        });
+      } else {
+        console.error('[api] ' + err);
+        res.send('not ok: ' + err);
+      }
+    });
+  }
+  if (req.query.light !== undefined) {
+    var newLight = req.query.light;
+    jsonfile.readFile(database, function(err, obj) {
+      if (err === null) {
+        obj.light = newLight;
+        web_io.emit('new light', obj.light);
+        jsonfile.writeFile(database, obj, function(err) {
+          if (err !== null) {
+            console.error('[api] ' + err);
+            res.send('not ok: ' + err);
+          }
+        });
+      } else {
+        console.error('[api] ' + err);
+        res.send('not ok: ' + err);
+      }
+    });
+  }
+  res.send('ok');
 });
 
 api_app.listen(3003, '0.0.0.0', function() {

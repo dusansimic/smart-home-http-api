@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>Smart Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css"></link>
   </head>
   <body>
     <div id="app">
@@ -11,27 +12,41 @@
           <!--<input type="button" id="get-data-btn" value="Get data"></input>-->
           <p id="temperature-display">Temperature: {{temperature}}</p>
           <p id="light-display">Light: {{light}}</p>
+          <div id="light-graph" style="width: 600px; height: 250px;"></div>
         </div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
+
     <script type="text/javascript">
       var socket = io();
 
       var app = new Vue({
-        el: '#body',
+        el: '#app',
         data: {
           temperature: '',
           light: ''
         }
       });
 
+
       $(document).ready(function() {
         socket.emit('get temperature');
         socket.emit('get light');
       });
+
+      var light_graph = $('#light-graph')[0];
+      var items = [];
+      var items_num = 0;
+      var dataset = new vis.DataSet(items);
+      var options = {
+        start: 0,
+        end: 30
+      }
+      var graph2d = new vis.Graph2d(light_graph, dataset, options);
 
       socket.on('new temperature', function(temperature) {
         //$('#temperature-display').text('Temperature: ' + temperature);
@@ -43,6 +58,13 @@
         //$('#light-display').text('Light: ' + temperature);
         app.light = light;
         console.log(light);
+        if (items_num > 30) {
+          options.start = items_num;
+          options.end = items_num - 30;
+          graph2d.setOptions(options);
+        }
+        dataset.add({x: items_num, y: light});
+        items_num++;
       });
     </script>
   </body>
