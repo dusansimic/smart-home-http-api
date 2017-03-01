@@ -1,12 +1,13 @@
-// creating api server
-var api_express = require('express');
-var api_app = api_express();
+// creating app
+var express = require('express');
+var app = express();
 
-// creating web server
-var web_express = require('express');
-var web_app = web_express();
-var web_server = require('http').Server(web_app);
-var web_io = require('socket.io')(web_server);
+var api_router = express.Router();
+var web_router = express.Router();
+
+// creating server
+var server = require('http').Server(app);
+var web_io = require('socket.io')(server);
 
 var jsonfile = require('jsonfile');
 
@@ -14,7 +15,8 @@ var database = 'data/database.json';
 
 // === api code ===
 
-api_app.get('/new-data', function(req, res) {
+api_router.get('/new-data', function(req, res) {
+  // if you get temperature
   if (req.query.temperature !== undefined) {
     var newTemperature = req.query.temperature;
     jsonfile.readFile(database, function(err, obj) {
@@ -33,6 +35,7 @@ api_app.get('/new-data', function(req, res) {
       }
     });
   }
+  // if you get light
   if (req.query.light !== undefined) {
     var newLight = req.query.light;
     jsonfile.readFile(database, function(err, obj) {
@@ -51,21 +54,43 @@ api_app.get('/new-data', function(req, res) {
       }
     });
   }
+  // if you get button
+  if (req.query.button !== undefined) {
+    var newButton = req.query.light;
+    jsonfile.readFile(database, function(err, obj) {
+      if (err === null) {
+        obj.button = newButton;
+        web_io.emit('new button', obj.button);
+        jsonfile.writeFile(database, obj, function(err) {
+          if (err)
+            throw err
+          console.error('[api]' + err);
+          res.send('not ok: ' + err);
+        });
+      } else {
+        console.error('[api] ' + err);
+        res.send('not ok: ', err);
+      }
+    });
+  }
   res.send('ok');
-});
-
-api_app.listen(3003, '0.0.0.0', function() {
-  console.log('listening api *:3003');
 });
 
 
 // === web code ===
 
-web_app.use(web_express.static('public'));
+web_router.use(express.static('public'));
 
-web_server.listen(3000, '0.0.0.0', function() {
-  console.log('listening web *:3000');
+// === server code ===
+
+app.use('/api', api_router);
+app.use('/ui', web_router);
+
+server.listen(3000, '0.0.0.0', function() {
+  console.log('listening *:3000');
 });
+
+// === socket.io code ===
 
 web_io.on('connection', function(socket) {
   socket.on('get temperature', function() {
@@ -82,6 +107,15 @@ web_io.on('connection', function(socket) {
     jsonfile.readFile(database, function(err, obj) {
       if (err === null) {
         socket.emit('new light', obj.light);
+      } else {
+        console.error('[web] ' + err);
+      }
+    });
+  });
+  socket.on('get button', function() {
+    jsonfile.readFile(database, function(err, obj) {
+      if (err === null) {
+        socket.emit('new button', obj.button);
       } else {
         console.error('[web] ' + err);
       }
