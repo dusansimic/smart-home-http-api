@@ -56,16 +56,16 @@ api_router.get('/new-data', function(req, res) {
   }
   // if you get button
   if (req.query.button !== undefined) {
-    var newButton = req.query.light;
+    var newButton = req.query.button;
     jsonfile.readFile(database, function(err, obj) {
       if (err === null) {
         obj.button = newButton;
         web_io.emit('new button', obj.button);
         jsonfile.writeFile(database, obj, function(err) {
-          if (err)
-            throw err
-          console.error('[api]' + err);
-          res.send('not ok: ' + err);
+          if (err !== null) {
+            console.error('[api]' + err);
+            res.send('not ok: ' + err);
+          }
         });
       } else {
         console.error('[api] ' + err);
