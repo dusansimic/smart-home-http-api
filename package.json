@@ -6,11 +6,12 @@
   "dependencies": {
     "express": "^4.14.1",
     "jsonfile": "^2.4.0",
-    "socket.io": "^1.7.2"
+    "socket.io": "^1.7.3"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "node main.js"
+    "test": "node main.js",
+    "main": "node main.js"
   },
   "repository": {
     "type": "git",

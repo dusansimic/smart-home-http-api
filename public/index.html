@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>Smart Home</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css"></link>
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css"></link>-->
     <link rel="stylesheet" href="index.css"></link>
   <body>
     <div id="app">
@@ -11,7 +11,6 @@
         <div id="body">
           <p id="temperature-display">Temperature: {{temperature}}</p>
           <p id="light-display">Light: {{light}}</p>
-          <!--<div id="light-graph" style="width: 600px; height: 250px;"></div>-->
           <div id="button1-display" style="width: 100px; height: 100px; border-radius: 50px; background-color: black;">
             <label class="button-label">Button 1</label>
           </div>
@@ -21,7 +20,8 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
     <script src="./otherstuff.js"></script>
     <script type="text/javascript">
       var socket = io();
@@ -57,13 +57,32 @@
       }
       var graph2d = new vis.Graph2d(light_graph, dataset, options);*/
 
+      /*var temperature_chart = new Chart($('#temperature-graph'), {
+          type: 'line',
+          data: {
+            datasets: [{
+              label: 'Tempearture',
+              data: []
+            }]
+          },
+          options: {
+            scales: {
+              xAxes: [{
+                type: 'linear',
+                position: 'bottom'
+              }]
+            }
+          }
+      });*/
+
       socket.on('new temperature', function(temperature) {
         //$('#temperature-display').text('Temperature: ' + temperature);
         app.temperature = temperature;
+        /*var n = temperature_chart.data.datasets[0].data.length() + 1;
+        temperature_chart.data.datasets[0].data.push({x: n, y: temperature});*/
       });
 
       socket.on('new light', function(light) {
-        //$('#light-display').text('Light: ' + temperature);
         if (light < 256) {
           app.light = 'it\'s too dark';
         } else if (light < 768) {
