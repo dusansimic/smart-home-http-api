@@ -4,23 +4,25 @@
     <meta charset="utf-8" />
     <title>Smart Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css"></link>
-  </head>
+    <link rel="stylesheet" href="index.css"></link>
   <body>
     <div id="app">
       <div id="wrapper">
         <div id="body">
-          <!--<input type="button" id="get-data-btn" value="Get data"></input>-->
           <p id="temperature-display">Temperature: {{temperature}}</p>
           <p id="light-display">Light: {{light}}</p>
-          <div id="light-graph" style="width: 600px; height: 250px;"></div>
+          <!--<div id="light-graph" style="width: 600px; height: 250px;"></div>-->
+          <div id="button1-display" style="width: 100px; height: 100px; border-radius: 50px; background-color: black;">
+            <label class="button-label">Button 1</label>
+          </div>
         </div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script src="https://unpkg.com/vue"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
-
+    <script src="./otherstuff.js"></script>
     <script type="text/javascript">
       var socket = io();
 
@@ -28,7 +30,8 @@
         el: '#app',
         data: {
           temperature: '',
-          light: ''
+          light: '',
+          button: ''
         }
       });
 
@@ -36,9 +39,15 @@
       $(document).ready(function() {
         socket.emit('get temperature');
         socket.emit('get light');
+        socket.emit('get button');
+
+
+        // styles
+
+        $('.button-label').center(true);
       });
 
-      var light_graph = $('#light-graph')[0];
+      /*var light_graph = $('#light-graph')[0];
       var items = [];
       var items_num = 0;
       var dataset = new vis.DataSet(items);
@@ -46,25 +55,31 @@
         start: 0,
         end: 30
       }
-      var graph2d = new vis.Graph2d(light_graph, dataset, options);
+      var graph2d = new vis.Graph2d(light_graph, dataset, options);*/
 
       socket.on('new temperature', function(temperature) {
         //$('#temperature-display').text('Temperature: ' + temperature);
         app.temperature = temperature;
-        console.log(temperature);
       });
 
       socket.on('new light', function(light) {
         //$('#light-display').text('Light: ' + temperature);
-        app.light = light;
-        console.log(light);
-        if (items_num > 30) {
-          options.start = items_num;
-          options.end = items_num - 30;
-          graph2d.setOptions(options);
+        if (light < 256) {
+          app.light = 'it\'s too dark';
+        } else if (light < 768) {
+          app.light = 'it\'s ok';
+        } else {
+          app.light = 'it\'s too bright';
         }
-        dataset.add({x: items_num, y: light});
-        items_num++;
+      });
+
+      socket.on('new button', function(button) {
+        app.button = button;
+        if (app.button === '1') {
+          $('#button1-display').css('background-color', 'blue');
+        } else {
+          $('#button1-display').css('background-color', 'black');
+        }
       });
     </script>
   </body>
