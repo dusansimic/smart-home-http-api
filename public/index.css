@@ -17,9 +17,23 @@ body {
 
 #button1-display {
   position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  background-color: black;
 }
 
 .button-label {
   color: #dadada;
   font-size: 18px;
+}
+
+#temperature-graph {
+  font-size: 16px;
+  background-color: #ffffff;
+}
+
+#humidity-graph {
+  font-size: 16px;
+  background-color: #ffffff;
 }

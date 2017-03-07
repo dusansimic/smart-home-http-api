@@ -15,6 +15,10 @@ var database = 'data/database.json';
 
 // === api code ===
 
+api_router.get('/check', function(req, res) {
+  res.send({active: true});
+});
+
 api_router.get('/new-data', function(req, res) {
   // if you get temperature
   if (req.query.temperature !== undefined) {
@@ -23,6 +27,25 @@ api_router.get('/new-data', function(req, res) {
       if (err === null) {
         obj.temperature = newTemperature;
         web_io.emit('new temperature', obj.temperature);
+        jsonfile.writeFile(database, obj, function(err) {
+          if (err !== null) {
+            console.error('[api] ' + err);
+            res.send('not ok: ' + err);
+          }
+        });
+      } else {
+        console.error('[api] ' + err);
+        res.send('not ok: ' + err);
+      }
+    });
+  }
+  // if you get humidity
+  if (req.query.humidity !== undefined) {
+    var newHumidity = req.query.humidity;
+    jsonfile.readFile(database, function(err, obj) {
+      if (err === null) {
+        obj.humidity = newHumidity;
+        web_io.emit('new humidity', obj.humidity);
         jsonfile.writeFile(database, obj, function(err) {
           if (err !== null) {
             console.error('[api] ' + err);

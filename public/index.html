@@ -3,25 +3,23 @@
   <head>
     <meta charset="utf-8" />
     <title>Smart Home</title>
-    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css"></link>-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css"></link>
     <link rel="stylesheet" href="index.css"></link>
   <body>
     <div id="app">
       <div id="wrapper">
         <div id="body">
-          <p id="temperature-display">Temperature: {{temperature}}</p>
           <p id="light-display">Light: {{light}}</p>
-          <div id="button1-display" style="width: 100px; height: 100px; border-radius: 50px; background-color: black;">
-            <label class="button-label">Button 1</label>
-          </div>
+          <div id="temperature-graph"></div></br>
+          <div id="humidity-graph"></div></br>
+          <div id="button1-display"><label class="button-label">Button 1</label></div>
         </div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
     <script src="./otherstuff.js"></script>
     <script type="text/javascript">
       var socket = io();
@@ -30,6 +28,7 @@
         el: '#app',
         data: {
           temperature: '',
+          humidity: '',
           light: '',
           button: ''
         }
@@ -47,40 +46,49 @@
         $('.button-label').center(true);
       });
 
-      /*var light_graph = $('#light-graph')[0];
-      var items = [];
-      var items_num = 0;
-      var dataset = new vis.DataSet(items);
-      var options = {
+      // making temperature graph
+      var items_num_temp = 0;
+      var gotMax_temp = false;
+      var dataset_temp = new vis.DataSet([]);
+      var options_temp = {
         start: 0,
-        end: 30
-      }
-      var graph2d = new vis.Graph2d(light_graph, dataset, options);*/
+        end: 50
+      };
+      var temperature_chart = new vis.Graph2d($('#temperature-graph')[0], dataset_temp, options_temp);
 
-      /*var temperature_chart = new Chart($('#temperature-graph'), {
-          type: 'line',
-          data: {
-            datasets: [{
-              label: 'Tempearture',
-              data: []
-            }]
-          },
-          options: {
-            scales: {
-              xAxes: [{
-                type: 'linear',
-                position: 'bottom'
-              }]
-            }
-          }
-      });*/
+      // making humidity graph
+      var items_num_hum = 0;
+      var gotMax_hum = false;
+      var dataset_hum = new vis.DataSet([]);
+      var options_hum = {
+        start: 0,
+        end: 50
+      };
+      var humidity_chart = new vis.Graph2d($('#humidity-graph')[0], dataset_hum, options_hum);
 
       socket.on('new temperature', function(temperature) {
-        //$('#temperature-display').text('Temperature: ' + temperature);
         app.temperature = temperature;
-        /*var n = temperature_chart.data.datasets[0].data.length() + 1;
-        temperature_chart.data.datasets[0].data.push({x: n, y: temperature});*/
+        if (gotMax_temp) {
+          dataset_temp.remove(items_num_temp - 50);
+        }
+        dataset_temp.add({id: items_num_temp, x: items_num_temp, y: temperature});
+        items_num_temp++;
+        if (items_num_temp == 50) {
+          gotMax_temp = true;
+        }
       });
+
+      socket.on('new humidity', function(humidity) {
+        app.humidity = humidity;
+        if (gotMax_hum) {
+          dataset_hum.remove(items_num_hum - 50);
+        }
+        dataset_hum.add({id: items_num_hum, x: items_num_hum, y: humidity});
+        items_num_hum++;
+        if (items_num_hum == 50) {
+          gotMax_hum = true;
+        }
+      })
 
       socket.on('new light', function(light) {
         if (light < 256) {
