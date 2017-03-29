@@ -10,17 +10,26 @@
       <div id="wrapper">
         <div id="body">
           <p id="light-display">Light: {{light}}</p>
-          <div id="temperature-graph"></div></br>
-          <div id="humidity-graph"></div></br>
+          <div id="temperature-graph-container">
+            <canvas id="temperature-graph" width="100px" height="20px"></canvas>
+          </div></br>
+          <div id="humidity-graph-container">
+            <canvas id="humidity-graph" width="100px" height="20px"></canvas>
+          </div></br>
           <div id="button1-display"><label class="button-label">Button 1</label></div>
         </div>
       </div>
     </div>
+
+
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script src="./otherstuff.js"></script>
+
+    
     <script type="text/javascript">
       var socket = io();
 
@@ -37,6 +46,7 @@
 
       $(document).ready(function() {
         socket.emit('get temperature');
+        socket.emit('get humidity');
         socket.emit('get light');
         socket.emit('get button');
 
@@ -46,48 +56,29 @@
         $('.button-label').center(true);
       });
 
-      // making temperature graph
-      var items_num_temp = 0;
-      var gotMax_temp = false;
-      var dataset_temp = new vis.DataSet([]);
-      var options_temp = {
-        start: 0,
-        end: 50
-      };
-      var temperature_chart = new vis.Graph2d($('#temperature-graph')[0], dataset_temp, options_temp);
+      // init graphs
 
-      // making humidity graph
-      var items_num_hum = 0;
-      var gotMax_hum = false;
-      var dataset_hum = new vis.DataSet([]);
-      var options_hum = {
-        start: 0,
-        end: 50
+      var temperature_data = {
+        datasets: [{
+          label: "Temperature",
+          data: []
+        }]
       };
-      var humidity_chart = new vis.Graph2d($('#humidity-graph')[0], dataset_hum, options_hum);
+      var humidity_data = {
+        datasets: [{
+          label: "Humidity",
+          data: []
+        }]
+      };
 
       socket.on('new temperature', function(temperature) {
         app.temperature = temperature;
-        if (gotMax_temp) {
-          dataset_temp.remove(items_num_temp - 50);
-        }
-        dataset_temp.add({id: items_num_temp, x: items_num_temp, y: temperature});
-        items_num_temp++;
-        if (items_num_temp == 50) {
-          gotMax_temp = true;
-        }
+        updateTemperatureGraph(temperature);
       });
 
       socket.on('new humidity', function(humidity) {
         app.humidity = humidity;
-        if (gotMax_hum) {
-          dataset_hum.remove(items_num_hum - 50);
-        }
-        dataset_hum.add({id: items_num_hum, x: items_num_hum, y: humidity});
-        items_num_hum++;
-        if (items_num_hum == 50) {
-          gotMax_hum = true;
-        }
+        updateHumidityGraph(humidity);
       })
 
       socket.on('new light', function(light) {

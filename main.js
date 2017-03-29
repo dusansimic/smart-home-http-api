@@ -2,6 +2,7 @@
 var express = require('express');
 var app = express();
 
+// creating routers for api and web server
 var api_router = express.Router();
 var web_router = express.Router();
 
@@ -19,16 +20,22 @@ api_router.get('/check', function(req, res) {
   res.send({active: true});
 });
 
+/*
+ * very important part!!!
+ * this code is for getting data from clients
+ * edit with caution
+ */
+
 api_router.get('/new-data', function(req, res) {
   // if you get temperature
-  if (req.query.temperature !== undefined) {
+  if (req.query.temperature) {
     var newTemperature = req.query.temperature;
     jsonfile.readFile(database, function(err, obj) {
-      if (err === null) {
+      if (!err) {
         obj.temperature = newTemperature;
         web_io.emit('new temperature', obj.temperature);
         jsonfile.writeFile(database, obj, function(err) {
-          if (err !== null) {
+          if (err) {
             console.error('[api] ' + err);
             res.send('not ok: ' + err);
           }
@@ -40,14 +47,14 @@ api_router.get('/new-data', function(req, res) {
     });
   }
   // if you get humidity
-  if (req.query.humidity !== undefined) {
+  if (req.query.humidity) {
     var newHumidity = req.query.humidity;
     jsonfile.readFile(database, function(err, obj) {
-      if (err === null) {
+      if (!err) {
         obj.humidity = newHumidity;
         web_io.emit('new humidity', obj.humidity);
         jsonfile.writeFile(database, obj, function(err) {
-          if (err !== null) {
+          if (err) {
             console.error('[api] ' + err);
             res.send('not ok: ' + err);
           }
@@ -59,14 +66,14 @@ api_router.get('/new-data', function(req, res) {
     });
   }
   // if you get light
-  if (req.query.light !== undefined) {
+  if (req.query.light) {
     var newLight = req.query.light;
     jsonfile.readFile(database, function(err, obj) {
-      if (err === null) {
+      if (!err) {
         obj.light = newLight;
         web_io.emit('new light', obj.light);
         jsonfile.writeFile(database, obj, function(err) {
-          if (err !== null) {
+          if (err) {
             console.error('[api] ' + err);
             res.send('not ok: ' + err);
           }
@@ -107,7 +114,7 @@ web_router.use(express.static('public'));
 // === server code ===
 
 app.use('/api', api_router);
-app.use('/ui', web_router);
+app.use('/', web_router);
 
 server.listen(3000, '0.0.0.0', function() {
   console.log('listening *:3000');
@@ -120,6 +127,16 @@ web_io.on('connection', function(socket) {
     jsonfile.readFile(database, function(err, obj) {
       if (err === null) {
         socket.emit('new temperature', obj.temperature);
+      } else {
+        console.error('[web] ' + err);
+      }
+    });
+  });
+
+  socket.on('get humidity', function() {
+    jsonfile.readFile(database, function(err, obj) {
+      if (err === null) {
+        socket.emit('new humidity', obj.humidity);
       } else {
         console.error('[web] ' + err);
       }
