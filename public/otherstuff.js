@@ -12,6 +12,8 @@ jQuery.fn.center = function(parent) {
   return this;
 }
 
+// this is code for graphs
+
 var options = {
     scales: {
         xAxes: [{

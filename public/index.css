@@ -37,3 +37,42 @@ body {
   font-size: 16px;
   background-color: #ffffff;
 }
+
+
+
+#light-bulb-container {
+  position: relative;
+}
+#light-bulb-container #light-bulb-glass {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  background-color: black; /* yellow */
+}
+#light-bulb-container #light-bulb-throat {
+  position: absolute;
+  top: 93.5px;
+  left: 25px;
+}
+#light-bulb-container #light-bulb-neck {
+  position: absolute;
+  top: 0px;
+  left: 2.5px;
+  width: 45px;
+  height: 35px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-color: #5a5a5a;
+}
+#light-bulb-container #light-bulb-top {
+  position: absolute;
+  top: 32px;
+  left: 22px;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #5a5a5a;
+}

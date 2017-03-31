@@ -17,6 +17,13 @@
             <canvas id="humidity-graph" width="100px" height="20px"></canvas>
           </div></br>
           <div id="button1-display"><label class="button-label">Button 1</label></div>
+          <div id="light-bulb-container">
+            <div id="light-bulb-glass"></div>
+            <div id="light-bulb-throat">
+              <div id="light-bulb-neck"></div>
+              <div id="light-bulb-top"></div>
+            </div>
+          </div></br></br></br></br>
         </div>
       </div>
     </div>
@@ -25,7 +32,6 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script src="./otherstuff.js"></script>
 
@@ -94,9 +100,11 @@
       socket.on('new button', function(button) {
         app.button = button;
         if (app.button === '1') {
-          $('#button1-display').css('background-color', 'blue');
+          //$('#button1-display').css('background-color', 'blue');
+          $('#light-bulb-glass').css('background-color', 'yellow');
         } else {
-          $('#button1-display').css('background-color', 'black');
+          //$('#button1-display').css('background-color', 'black');
+          $('#light-bulb-glass').css('background-color', 'black');
         }
       });
     </script>
