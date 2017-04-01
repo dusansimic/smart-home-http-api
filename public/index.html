@@ -22,7 +22,8 @@
               <div id="light-bulb-neck"></div>
               <div id="light-bulb-top"></div>
             </div>
-          </div></br></br></br></br>
+          </div></br></br></br></br></br></br>
+          <input type="checkbox" id="switch-check">Switch</input></br></br>
         </div>
       </div>
     </div>
@@ -45,12 +46,44 @@
           humidity: '',
           light: '',
           button: '',
+          buttonState: 0,
           distance: ''
         }
       });
 
+      // init graphs
+
+      var temperature_data = {
+        labels: [],
+        datasets: [{
+          label: "Temperature",
+          data: []
+        }]
+      };
+
+      var humidity_data = {
+        labels: [],
+        datasets: [{
+          label: "Humidity",
+          data: []
+        }]
+      };
+
+      var temperature_chart_chartjs = new Chart($("#temperature-graph"), {
+        type: 'line',
+        data: temperature_data,
+        options: options
+      });
+
+      var humidity_chart_chartjs = new Chart($("#humidity-graph"), {
+        type: 'line',
+        data: humidity_data,
+        options: options
+      });
+
 
       $(document).ready(function() {
+
         socket.emit('get temperature');
         socket.emit('get humidity');
         socket.emit('get light');
@@ -58,20 +91,7 @@
         socket.emit('get distance');
       });
 
-      // init graphs
-
-      var temperature_data = {
-        datasets: [{
-          label: "Temperature",
-          data: []
-        }]
-      };
-      var humidity_data = {
-        datasets: [{
-          label: "Humidity",
-          data: []
-        }]
-      };
+      
 
       socket.on('new temperature', function(temperature) {
         app.temperature = temperature;
@@ -99,12 +119,22 @@
 
       socket.on('new button', function(button) {
         app.button = button;
-        if (app.button == '1') {
-          //$('#button1-display').css('background-color', 'blue');
-          $('#light-bulb-glass').css('background-color', 'yellow');
+        if (document.getElementById('switch-check').checked) {
+          if (app.buttonState === 0 && app.button == '1') {
+            app.buttonState = 1;
+            $('#light-bulb-glass').css('background-color', 'yellow');
+          } else if (app.buttonState === 1 && app.button == '1') {
+            app.buttonState = 0;
+            $('#light-bulb-glass').css('background-color', 'black');
+          }
         } else {
-          //$('#button1-display').css('background-color', 'black');
-          $('#light-bulb-glass').css('background-color', 'black');
+          if (app.button == '1') {
+            //$('#button1-display').css('background-color', 'blue');
+            $('#light-bulb-glass').css('background-color', 'yellow');
+          } else {
+            //$('#button1-display').css('background-color', 'black');
+            $('#light-bulb-glass').css('background-color', 'black');
+          }
         }
       });
     </script>

@@ -35,8 +35,14 @@ var options_noanimations = {
 var updateTemperatureGraph = function(new_data) {
     $('#temperature-graph').remove();
     $('#temperature-graph-container').append('<canvas id="temperature-graph" width="100px" height="20px"></canvas>');
-    var new_index = temperature_data.datasets[0].data.length;
-    temperature_data.datasets[0].data.push({x: new_index, y: new_data});
+    var d = new Date();
+    var new_index = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+    temperature_data.datasets[0].data.push(new_data);
+    temperature_data.labels.push(new_index);
+    if (temperature_data.datasets[0].data.length > 50) {
+        temperature_data.datasets[0].data.splice(0, 1);
+        temperature_data.labels.splice(0, 1);
+    }
     temperature_chart_chartjs = new Chart($("#temperature-graph"), {
         type: 'line',
         data: temperature_data,
@@ -47,28 +53,17 @@ var updateTemperatureGraph = function(new_data) {
 var updateHumidityGraph = function(new_data) {
     $('#humidity-graph').remove();
     $('#humidity-graph-container').append('<canvas id="humidity-graph" width="100px" height="20px"></canvas>');
-    var new_index = humidity_data.datasets[0].data.length;
-    humidity_data.datasets[0].data.push({x: new_index, y: new_data});
+    var d = new Date();
+    var new_index = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+    humidity_data.datasets[0].data.push(new_data);
+    humidity_data.labels.push(new_index);
+    if (humidity_data.datasets[0].data.length > 50) {
+        humidity_data.datasets[0].data.splice(0, 1);
+        humidity_data.labels.splice(0, 1);
+    }
     humidity_chart_chartjs = new Chart($("#humidity-graph"), {
         type: 'line',
         data: humidity_data,
         options: options_noanimations
     });
 }
-
-// making graphs
-
-var temperature_data = {
-    datasets: [{
-        label: "Temperature",
-        data: []
-    }]
-};
-
-var humidity_data = {
-    datasets: [{
-        label: "Humidity",
-        data: []
-    }]
-};
-
