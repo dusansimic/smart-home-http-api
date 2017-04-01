@@ -103,6 +103,25 @@ api_router.get('/new-data', function(req, res) {
       }
     });
   }
+  // if you get distance
+  if (req.query.distance !== undefined) {
+    var newDistance = req.query.distance;
+    jsonfile.readFile(database, function(err, obj) {
+      if (err === null) {
+        obj.distance = newDistance;
+        web_io.emit('new distance', obj.distance);
+        jsonfile.writeFile(database, obj, function(err) {
+          if (err !== null) {
+            console.error('[api]' + err);
+            res.send('not ok: ' + err);
+          }
+        });
+      } else {
+        console.error('[api] ' + err);
+        res.send('not ok: ', err);
+      }
+    });
+  }
   res.send('ok');
 });
 
@@ -161,4 +180,13 @@ web_io.on('connection', function(socket) {
       }
     });
   });
+  socket.on('get distance', function() {
+    jsonfile.readFile(database, function(err, obj) {
+      if (err === null) {
+        socket.emit('new distance', obj.distance);
+      } else {
+        console.error('[web] ' + err);
+      }
+    });
+  })
 });

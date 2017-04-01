@@ -16,7 +16,6 @@
           <div id="humidity-graph-container">
             <canvas id="humidity-graph" width="100px" height="20px"></canvas>
           </div></br>
-          <div id="button1-display"><label class="button-label">Button 1</label></div>
           <div id="light-bulb-container">
             <div id="light-bulb-glass"></div>
             <div id="light-bulb-throat">
@@ -45,7 +44,8 @@
           temperature: '',
           humidity: '',
           light: '',
-          button: ''
+          button: '',
+          distance: ''
         }
       });
 
@@ -55,11 +55,7 @@
         socket.emit('get humidity');
         socket.emit('get light');
         socket.emit('get button');
-
-
-        // styles
-
-        $('.button-label').center(true);
+        socket.emit('get distance');
       });
 
       // init graphs
@@ -97,9 +93,13 @@
         }
       });
 
+      socket.on('new distance', function(distance) {
+        app.distance = distance;
+      });
+
       socket.on('new button', function(button) {
         app.button = button;
-        if (app.button === '1') {
+        if (app.button == '1') {
           //$('#button1-display').css('background-color', 'blue');
           $('#light-bulb-glass').css('background-color', 'yellow');
         } else {
