@@ -10,12 +10,13 @@
       <div id="wrapper">
         <div id="body">
           <p id="light-display">Light: {{light}}</p>
-          <div id="temperature-graph-container">
+          <!--<div id="temperature-graph-container">
             <canvas id="temperature-graph" width="100px" height="20px"></canvas>
           </div></br>
           <div id="humidity-graph-container">
             <canvas id="humidity-graph" width="100px" height="20px"></canvas>
-          </div></br>
+          </div></br>-->
+          <div id="temperature-chart"></div></br>
           <div id="light-bulb-container">
             <div id="light-bulb-glass"></div>
             <div id="light-bulb-throat">
@@ -33,6 +34,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="./otherstuff.js"></script>
 
     
@@ -53,7 +55,8 @@
 
       // init graphs
 
-      var temperature_data = {
+
+      /*var temperature_data = {
         labels: [],
         datasets: [{
           label: "Temperature",
@@ -79,6 +82,16 @@
         type: 'line',
         data: humidity_data,
         options: options
+      });*/
+
+      var temperature_chart = new Highcharts.Chart({
+        chart: {
+          renderTo: 'temperature-chart'
+        },
+        series: [{
+          type: 'spline',
+          data: []
+        }]
       });
 
 
@@ -96,6 +109,10 @@
       socket.on('new temperature', function(temperature) {
         app.temperature = temperature;
         updateTemperatureGraph(temperature);
+        var newData = temperature_chart.series[0].options.data;
+        console.log(newData);
+        newData.push(temperature);
+        temperature_chart.series[0].setData( newData );
       });
 
       socket.on('new humidity', function(humidity) {

@@ -13,7 +13,7 @@ jQuery.fn.center = function(parent) {
 }
 
 // this is code for graphs
-
+/*
 var options = {
     scales: {
         xAxes: [{
@@ -67,3 +67,4 @@ var updateHumidityGraph = function(new_data) {
         options: options_noanimations
     });
 }
+*/
