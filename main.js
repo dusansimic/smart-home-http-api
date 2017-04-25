@@ -14,8 +14,6 @@ var jsonfile = require('jsonfile');
 
 var database = 'data/database.json';
 
-var data = {};
-
 // === api code ===
 
 api_router.get('/check', function(req, res) {
@@ -32,7 +30,8 @@ api_router.get('/new-data', function(req, res) {
   var ok = true;
   // if you get temperature
   if (req.query.temperature !== undefined) {
-    var newTemperature = req.query.temperature;
+    var newTemperature = parseInt(req.query.temperature);
+    console.log(typeof(newTemperature));
     jsonfile.readFile(database, function(err, obj) {
       if (err === null) {
         obj.temperature = newTemperature;

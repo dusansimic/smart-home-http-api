@@ -30,7 +30,7 @@
     </div>
 
 
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
@@ -84,12 +84,24 @@
         options: options
       });*/
 
-      var temperature_chart = new Highcharts.Chart({
+      var temp_chart_options = {
         chart: {
-          renderTo: 'temperature-chart'
+          renderTo: 'temperature-chart',
+          type: 'spline'
         },
         series: [{
-          type: 'spline',
+          data: []
+        }]
+      };
+
+      var temp_chart_data = [];
+
+      var temperature_chart = new Highcharts.Chart({
+        chart: {
+          renderTo: 'temperature-chart',
+          type: 'spline'
+        },
+        series: [{
           data: []
         }]
       });
@@ -108,11 +120,14 @@
 
       socket.on('new temperature', function(temperature) {
         app.temperature = temperature;
-        updateTemperatureGraph(temperature);
-        var newData = temperature_chart.series[0].options.data;
-        console.log(newData);
-        newData.push(temperature);
-        temperature_chart.series[0].setData( newData );
+        //updateTemperatureGraph(temperature);
+        //var newData = temperature_chart.series[0].options.data;
+        //console.log(newData);
+        //newData.push(temperature);
+        //temperature_chart.series[0].setData( newData );
+        temp_chart_data.push(temperature);
+        console.log(temp_chart_data);
+        temperature_chart.series[0].data = temp_chart_data;
       });
 
       socket.on('new humidity', function(humidity) {
@@ -146,10 +161,8 @@
           }
         } else {
           if (app.button == '1') {
-            //$('#button1-display').css('background-color', 'blue');
             $('#light-bulb-glass').css('background-color', 'yellow');
           } else {
-            //$('#button1-display').css('background-color', 'black');
             $('#light-bulb-glass').css('background-color', 'black');
           }
         }

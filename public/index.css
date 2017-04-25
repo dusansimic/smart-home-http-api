@@ -2,7 +2,7 @@
 
 body {
   margin: 0;
-  background-color: #A1D490;
+  background-color: #fffed1;
   font-size: 24px;
   font-family: 'Open Sans', arial, cursive;
 }
@@ -21,7 +21,9 @@ body {
   background-color: #ffffff;
 }
 
-
+#temperature-chart {
+  background-color: #fffed1;
+}
 
 #light-bulb-container {
   position: relative;
