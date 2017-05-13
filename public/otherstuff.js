@@ -1,13 +1,13 @@
-jQuery.fn.center = function(parent) {
+jQuery.fn.center = (parent) => {
   if (parent) {
-      parent = this.parent();
+    parent = this.parent();
   } else {
-      parent = window;
+    parent = window;
   }
   this.css({
-      "position": "absolute",
-      "top": ((($(parent).height() - this.outerHeight()) / 2) + $(parent).scrollTop() + "px"),
-      "left": ((($(parent).width() - this.outerWidth()) / 2) + $(parent).scrollLeft() + "px")
+    "position": "absolute",
+    "top": ((($(parent).height() - this.outerHeight()) / 2) + $(parent).scrollTop() + "px"),
+    "left": ((($(parent).width() - this.outerWidth()) / 2) + $(parent).scrollLeft() + "px")
   });
   return this;
 }
@@ -15,24 +15,24 @@ jQuery.fn.center = function(parent) {
 // this is code for graphs
 /*
 var options = {
-    scales: {
-        xAxes: [{
-            type: 'linear',
-            position: 'bottom'
-        }]
-    }
+  scales: {
+    xAxes: [{
+      type: 'linear',
+      position: 'bottom'
+    }]
+  }
 };
 var options_noanimations = {
-    animation: false,
-    scales: {
-        xAxes: [{
-            type: 'linear',
-            position: 'bottom'
-        }]
-    }
+  animation: false,
+  scales: {
+    xAxes: [{
+      type: 'linear',
+      position: 'bottom'
+    }]
+  }
 };
 
-var updateTemperatureGraph = function(new_data) {
+var updateTemperatureGraph = (new_data) => {
     $('#temperature-graph').remove();
     $('#temperature-graph-container').append('<canvas id="temperature-graph" width="100px" height="20px"></canvas>');
     var d = new Date();
@@ -50,7 +50,7 @@ var updateTemperatureGraph = function(new_data) {
     });
 };
 
-var updateHumidityGraph = function(new_data) {
+var updateHumidityGraph = (new_data) => {
     $('#humidity-graph').remove();
     $('#humidity-graph-container').append('<canvas id="humidity-graph" width="100px" height="20px"></canvas>');
     var d = new Date();
@@ -66,5 +66,23 @@ var updateHumidityGraph = function(new_data) {
         data: humidity_data,
         options: options_noanimations
     });
+}*/
+
+/*const updateLightGraph = (light) => {
+    const serier = light_chart.series[0],
+          shift = series.data.length > 20;
+    light_chart.series[0].addPoint(light, true, shift);
+}*/
+
+const updateTemperatureGraph = (temperature) => {
+    const series = temp_hum_chart.series[0],
+          shift = series.data.length > 20;
+    temp_hum_chart.series[0].addPoint(temperature, true, shift);
+};
+
+const updateHumidityGraph = (humidity) => {
+    const series = temp_hum_chart.series[1],
+          shift = series.data.length > 20;
+    
+    temp_hum_chart.series[1].addPoint(humidity, true, shift);
 }
-*/

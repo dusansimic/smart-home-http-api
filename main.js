@@ -6,26 +6,29 @@
  * 
  */
 
+// loading config
+const config = require('./modules/config.json');
 
 // creating app
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
 
 // creating routers for api and web server
-var api_router = express.Router();
-var web_router = express.Router();
+const api_router = express.Router();
+const web_router = express.Router();
 
 // creating server
-var server = require('http').createServer(app);
-var web_io = require('socket.io')(server);
+const server = require('http').createServer(app);
+const web_io = require('socket.io')(server);
 
 // i've made this module for saving data to database file
 // plase be careful when you edit that code
-const dbtools = require('./modules/dbtools.js');
+const dbTools = require('./modules/dbtools.js');
+const sendTools = require('./modules/sendtools.js');
 
 // === api code ===
 
-api_router.get('/check', function(req, res) {
+api_router.get('/check', (req, res) => {
   res.send({active: true});
 });
 
@@ -35,27 +38,27 @@ api_router.get('/check', function(req, res) {
  * edit with caution
  */
 
-api_router.get('/new-data', function(req, res) {
+api_router.get('/new-data', (req, res) => {
   var ok = true;
   // if you get temperature
   if (req.query.temperature !== undefined) {
-    if (!ok) dbtools.saveTemperature(req.query.humidity, web_io);
-    else ok = dbtools.saveTemperature(req.query.temperature, web_io);
+    if (!ok) dbTools.saveTemperature(req.query.humidity, web_io);
+    else ok = dbTools.saveTemperature(req.query.temperature, web_io);
   }
   // if you get humidity
   if (req.query.humidity !== undefined) {
-    if (!ok) dbtools.saveHumidity(req.query.humidity, web_io);
-    else ok = dbtools.saveHumidity(req.query.humidity, web_io);
+    if (!ok) dbTools.saveHumidity(req.query.humidity, web_io);
+    else ok = dbTools.saveHumidity(req.query.humidity, web_io);
   }
   // if you get light
   if (req.query.light !== undefined) {
-    if (!ok) dbtools.saveLight(req.query.light, web_io);
-    else ok = dbtools.saveLight(req.query.light, web_io);
+    if (!ok) dbTools.saveLight(req.query.light, web_io);
+    else ok = dbTools.saveLight(req.query.light, web_io);
   }
   // if you get button
   if (req.query.button !== undefined) {
-    if (!ok) dbtools.saveButton(req.query.button, web_io);
-    else ok = dbtools.saveButton(req.query.button, web_io);
+    if (!ok) dbTools.saveButton(req.query.button, web_io);
+    else ok = dbTools.saveButton(req.query.button, web_io);
   }
   // if you get distance
   /*
@@ -84,6 +87,13 @@ api_router.get('/new-data', function(req, res) {
     res.send('not ok');
 });
 
+api_router.get('/get-data', (req, res) => {
+  dbTools.getAll((err, obj) => {
+    if (!err) res.send(obj);
+    else res.status(500).send('Could not get data!');
+  });
+});
+
 
 // === web code ===
 
@@ -94,30 +104,35 @@ web_router.use(express.static('public'));
 app.use('/api', api_router);
 app.use('/', web_router);
 
-server.listen(3000, '0.0.0.0', function() {
-  console.log('listening *:3000');
+server.listen(config.server.port, '0.0.0.0', () => {
+  console.log('listening *:' + config.server.port);
 });
 
 // === socket.io code ===
 
-web_io.on('connection', function(socket) {
-  socket.on('get temperature', function() {
-    let temperature = dbtools.getTemperature();
+web_io.on('connection', (socket) => {
+  socket.on('get temperature', () => {
+    let temperature = dbTools.getTemperature();
     socket.emit('new temperature', temperature);
   });
 
-  socket.on('get humidity', function() {
-    let humidity = dbtools.getHumidity();
+  socket.on('get humidity', () => {
+    let humidity = dbTools.getHumidity();
     socket.emit('new humidity', humidity);
   });
 
-  socket.on('get light', function() {
-    let light = dbtools.getLight();
+  socket.on('get light', () => {
+    let light = dbTools.getLight();
     socket.emit('new light', light);
   });
-  socket.on('get button', function() {
-    let button = dbtools.getButton();
+  socket.on('get button', () => {
+    let button = dbTools.getButton();
     socket.emit('new button', button);
+  });
+  socket.on('set lamp', (state) => {
+    if(dbTools.saveLamp(state, web_io)) {
+      sendTools.sendToLamp(state, config.sendTools.lampServer.address);
+    }
   });
   /*socket.on('get distance', function() {
     jsonfile.readFile(database, function(err, obj) {

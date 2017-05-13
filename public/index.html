@@ -2,6 +2,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Smart Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css"></link>
     <link rel="stylesheet" href="index.css"></link>
@@ -9,22 +11,16 @@
     <div id="app">
       <div id="wrapper">
         <div id="body">
-          <p id="light-display">Light: {{light}}</p>
-          <!--<div id="temperature-graph-container">
-            <canvas id="temperature-graph" width="100px" height="20px"></canvas>
-          </div></br>
-          <div id="humidity-graph-container">
-            <canvas id="humidity-graph" width="100px" height="20px"></canvas>
-          </div></br>-->
-          <div id="temperature-chart"></div></br>
+          <!--<p id="light-display">Light: {{light}}</p>-->
+          <!--<div id="light-chart"></div></br>-->
+          <div id="temp-hum-chart"></div></br>
           <div id="light-bulb-container">
             <div id="light-bulb-glass"></div>
             <div id="light-bulb-throat">
               <div id="light-bulb-neck"></div>
               <div id="light-bulb-top"></div>
             </div>
-          </div></br></br></br></br></br></br>
-          <input type="checkbox" id="switch-check">Switch</input></br></br>
+          </div>
         </div>
       </div>
     </div>
@@ -36,137 +32,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="./otherstuff.js"></script>
-
-    
-    <script type="text/javascript">
-      var socket = io();
-
-      var app = new Vue({
-        el: '#app',
-        data: {
-          temperature: '',
-          humidity: '',
-          light: '',
-          button: '',
-          buttonState: 0,
-          distance: ''
-        }
-      });
-
-      // init graphs
-
-
-      /*var temperature_data = {
-        labels: [],
-        datasets: [{
-          label: "Temperature",
-          data: []
-        }]
-      };
-
-      var humidity_data = {
-        labels: [],
-        datasets: [{
-          label: "Humidity",
-          data: []
-        }]
-      };
-
-      var temperature_chart_chartjs = new Chart($("#temperature-graph"), {
-        type: 'line',
-        data: temperature_data,
-        options: options
-      });
-
-      var humidity_chart_chartjs = new Chart($("#humidity-graph"), {
-        type: 'line',
-        data: humidity_data,
-        options: options
-      });*/
-
-      var temp_chart_options = {
-        chart: {
-          renderTo: 'temperature-chart',
-          type: 'spline'
-        },
-        series: [{
-          data: []
-        }]
-      };
-
-      var temp_chart_data = [];
-
-      var temperature_chart = new Highcharts.Chart({
-        chart: {
-          renderTo: 'temperature-chart',
-          type: 'spline'
-        },
-        series: [{
-          data: []
-        }]
-      });
-
-
-      $(document).ready(function() {
-
-        socket.emit('get temperature');
-        socket.emit('get humidity');
-        socket.emit('get light');
-        socket.emit('get button');
-        socket.emit('get distance');
-      });
-
-      
-
-      socket.on('new temperature', function(temperature) {
-        app.temperature = temperature;
-        //updateTemperatureGraph(temperature);
-        //var newData = temperature_chart.series[0].options.data;
-        //console.log(newData);
-        //newData.push(temperature);
-        //temperature_chart.series[0].setData( newData );
-        temp_chart_data.push(temperature);
-        console.log(temp_chart_data);
-        temperature_chart.series[0].data = temp_chart_data;
-      });
-
-      socket.on('new humidity', function(humidity) {
-        app.humidity = humidity;
-        updateHumidityGraph(humidity);
-      })
-
-      socket.on('new light', function(light) {
-        if (light < 256) {
-          app.light = 'it\'s too dark';
-        } else if (light < 768) {
-          app.light = 'it\'s ok';
-        } else {
-          app.light = 'it\'s too bright';
-        }
-      });
-
-      socket.on('new distance', function(distance) {
-        app.distance = distance;
-      });
-
-      socket.on('new button', function(button) {
-        app.button = button;
-        if (document.getElementById('switch-check').checked) {
-          if (app.buttonState === 0 && app.button == '1') {
-            app.buttonState = 1;
-            $('#light-bulb-glass').css('background-color', 'yellow');
-          } else if (app.buttonState === 1 && app.button == '1') {
-            app.buttonState = 0;
-            $('#light-bulb-glass').css('background-color', 'black');
-          }
-        } else {
-          if (app.button == '1') {
-            $('#light-bulb-glass').css('background-color', 'yellow');
-          } else {
-            $('#light-bulb-glass').css('background-color', 'black');
-          }
-        }
-      });
-    </script>
+    <script src="./main.js"></script>
   </body>
 </html>
