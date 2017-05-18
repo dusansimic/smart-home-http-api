@@ -7,16 +7,20 @@ module.exports = {
       'lampstate': state
     });
 
-    const options = {
+    var options = {
       hostname: lampaddress,
       port: 80,
       path: '/',
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Constent-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': Buffer.byteLength(postData)
+        'Content-Length': Buffer.byteLength(postData),
+        'Connection': 'close'
       }
     }
+
+    if (state) options.path = '/turn-on';
+    else options.path = '/turn-off';
 
     const req = http.request(options, (res) => {
       if (res.statusCode != 200) console.error(res.statusCode);
@@ -28,7 +32,7 @@ module.exports = {
     });
 
     req.on('error', (e) => {
-      console.error('[api]', e.message);
+      console.error('[http request]', e.message);
     });
 
     req.write(postData);

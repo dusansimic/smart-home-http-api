@@ -8,16 +8,15 @@
 
 // loading config
 const config = require('./modules/config.json');
+var lampIP = config.sendTools.lampServer.address;
 
-// creating app
+// creating app and server
 const express = require('express');
 const app = express();
 
-// creating routers for api and web server
 const api_router = express.Router();
 const web_router = express.Router();
 
-// creating server
 const server = require('http').createServer(app);
 const web_io = require('socket.io')(server);
 
@@ -26,7 +25,7 @@ const web_io = require('socket.io')(server);
 const dbTools = require('./modules/dbtools.js');
 const sendTools = require('./modules/sendtools.js');
 
-// === api code ===
+// api code
 
 api_router.get('/check', (req, res) => {
   res.send({active: true});
@@ -94,12 +93,17 @@ api_router.get('/get-data', (req, res) => {
   });
 });
 
+api_router.get('/lamp-ip', (req, res) => {
+  lampIP = req.query.ip;
+  res.send('Got the lamp ip!');
+});
 
-// === web code ===
+
+// including website dir public
 
 web_router.use(express.static('public'));
 
-// === server code ===
+// server code
 
 app.use('/api', api_router);
 app.use('/', web_router);
@@ -108,7 +112,7 @@ server.listen(config.server.port, '0.0.0.0', () => {
   console.log('listening *:' + config.server.port);
 });
 
-// === socket.io code ===
+// socket.io code
 
 web_io.on('connection', (socket) => {
   socket.on('get temperature', () => {
@@ -131,7 +135,7 @@ web_io.on('connection', (socket) => {
   });
   socket.on('set lamp', (state) => {
     if(dbTools.saveLamp(state, web_io)) {
-      sendTools.sendToLamp(state, config.sendTools.lampServer.address);
+      sendTools.sendToLamp(state, lampIP);
     }
   });
   /*socket.on('get distance', function() {

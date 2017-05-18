@@ -16,13 +16,13 @@ module.exports = {
         web_io.emit('new temperature', obj.temperature);
         jsonfile.writeFile(database, obj, function(err) {
           if (err !== null) {
-            console.error('[api] ' + err);
+            console.error('[save data] ' + err);
             ok = false;
             _err = err;
           }
         });
       } else {
-        console.error('[api] ' + err);
+        console.error('[save data] ' + err);
         ok = false;
         _err = err;
       }
@@ -40,13 +40,13 @@ module.exports = {
         web_io.emit('new humidity', obj.humidity);
         jsonfile.writeFile(database, obj, function(err) {
           if (err !== null) {
-            console.error('[api] ' + err);
+            console.error('[save data] ' + err);
             ok = false;
             _err = err;
           }
         });
       } else {
-        console.error('[api] ' + err);
+        console.error('[save data] ' + err);
         ok = false;
         _err = err;
       }
@@ -64,13 +64,13 @@ module.exports = {
         web_io.emit('new light', obj.light);
         jsonfile.writeFile(database, obj, function(err) {
           if (err !== null) {
-            console.error('[api] ' + err);
+            console.error('[save data] ' + err);
             ok = false;
             _err = err;
           }
         });
       } else {
-        console.error('[api] ' + err);
+        console.error('[save data] ' + err);
         ok = false;
         _err = err;
       }
@@ -88,13 +88,13 @@ module.exports = {
         web_io.emit('new button', obj.button);
         jsonfile.writeFile(database, obj, function(err) {
           if (err !== null) {
-            console.error('[api] ' + err);
+            console.error('[save data] ' + err);
             ok = false;
             _err = err;
           }
         });
       } else {
-        console.error('[api] ' + err);
+        console.error('[save data] ' + err);
         ok = false;
         _err = err;
       }
@@ -112,13 +112,13 @@ module.exports = {
         web_io.emit('new lamp', obj.lamp);
         jsonfile.writeFile(database, obj, function(err) {
           if (err !== null) {
-            console.error('[api] ' + err);
+            console.error('[save data] ' + err);
             ok = false;
             _err = err;
           }
         });
       } else {
-        console.error('[api] ' + err);
+        console.error('[save data] ' + err);
         ok = false;
         _err = err;
       }
