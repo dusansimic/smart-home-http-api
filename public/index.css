@@ -2,7 +2,7 @@
 
 body {
   margin: 0;
-  background-color: #fffed1;
+  background-color: #fff;
   font-size: 24px;
   font-family: 'Open Sans', arial, cursive;
 }
@@ -13,16 +13,16 @@ body {
 
 #temperature-graph {
   font-size: 16px;
-  background-color: #ffffff;
+  background-color: #fff;
 }
 
 #humidity-graph {
   font-size: 16px;
-  background-color: #ffffff;
+  background-color: #fff;
 }
 
 #temperature-chart {
-  background-color: #fffed1;
+  background-color: #fff;
 }
 
 #light-bulb-container {
